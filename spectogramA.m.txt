@@ -1,0 +1,38 @@
+% Parameters
+fD = 32;     % Beat frequency (Hz)
+Tdur = 0.26; % Duration of the signal (s)
+fs = 11025;  % Sampling frequency (Hz)
+fc = 2000;   % Carrier frequency (Hz)
+
+% Calculate the two component frequencies
+f1 = fc - fD/2;
+f2 = fc + fD/2;
+
+% Generate the time vector
+dt = 1/fs;
+t = 0:dt:Tdur;
+
+% Generate the two sinusoidal components
+signal1 = cos(2*pi*f1*t);
+signal2 = cos(2*pi*f2*t);
+
+% Superimpose the two signals to create the beat signal
+beatSignal = signal1 + signal2;
+
+% Plot the beat signal in the time domain
+figure;
+plot(t, beatSignal);
+xlabel('Time (s)');
+ylabel('Amplitude');
+title('Beat Signal in Time Domain'); %Added info to title
+% Generate and plot the spectrogram
+x = sin(2*pi*100*t) + 0.5*sin(2*pi*200*t); % Example signal
+
+% Generate and plot the spectrogram
+figure;
+spectrogram(x, 16, 8, 16, fs, 'yaxis');
+colormap(flipud(gray(256))); % Or try 'jet', 'hot', or 'viridis'
+title('Spectrogram of Example Signal');
+colorbar;
+ylabel('Frequency (Hz)'); % Add label
+xlabel('Time (s)');

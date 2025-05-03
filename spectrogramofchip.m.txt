@@ -1,0 +1,41 @@
+function y = mychirp(t, f0, f1)
+  %mychirp Generate a chirp signal.
+  %   y = mychirp(t, f0, f1) generates a chirp signal with
+  %   instantaneous frequency that varies linearly with time.
+  %
+  %   t  : Time vector.
+  %   f0 : Starting frequency (Hz).
+  %   f1 : Ending frequency (Hz).
+  %
+  %   The instantaneous frequency at time t is given by:
+  %   f(t) = f0 + (f1 - f0) * t / t(end)
+  %
+  %   The phase is the integral of 2*pi*f(t)
+
+  T = t(end);  % Total duration
+  k = (f1 - f0) / T; % Frequency slope
+  phase = 2*pi * (f0*t + 0.5*k*t.^2);
+  y = cos(phase);
+end
+
+% Parameters
+fs = 11025;  % D/A conversion rate (Hz)
+Tdur = 3;    % Total time duration (s)
+f0 = 5000; % Starting frequency (Hz)
+f1 = 300;   % Ending frequency (Hz)
+
+% Generate the time vector
+dt = 1/fs;
+t = 0:dt:Tdur;
+
+% Generate the chirp signal using mychirp
+chirpSignal = mychirp(t, f0, f1);
+
+% Create and plot the spectrogram
+figure;
+spectrogram(chirpSignal, 1024, 200, [], fs, 'yaxis');
+colormap(flipud(gray(256)));
+title('Spectrogram of Chirp Signal (5000 Hz to 300 Hz)');
+colorbar;
+ylabel('Frequency (Hz)');
+xlabel('Time (s)');
