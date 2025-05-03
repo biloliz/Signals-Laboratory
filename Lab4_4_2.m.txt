@@ -1,0 +1,128 @@
+clear all;
+close all;
+
+% (a) Generate and Analyze the Hamming BPF (L=41)
+L = 41;
+omega_o = 0.25 * pi;
+n = 0:L-1;
+hamming_window = 0.54 - 0.46 * cos(2 * pi * n / (L - 1));
+impulse_response = hamming_window .* cos(omega_o * (n - (L - 1) / 2));
+
+% Calculate the frequency response
+[h, w] = freqz(impulse_response, 1, 512);
+magnitude = abs(h);
+phase = angle(h);
+
+% Plot the frequency response
+figure;
+subplot(2, 1, 1);
+plot(w / pi, 20 * log10(magnitude));
+title('Magnitude Response (L=41)');
+xlabel('Frequency (\omega / \pi)');
+ylabel('Magnitude (dB)');
+grid on;
+
+subplot(2, 1, 2);
+plot(w / pi, phase);
+title('Phase Response (L=41)');
+xlabel('Frequency (\omega / \pi)');
+ylabel('Phase (radians)');
+grid on;
+
+% Measure the response at specific frequencies
+frequencies_oi = [0, 0.1 * pi, 0.25 * pi, 0.4 * pi, 0.5 * pi, 0.75 * pi];
+response_table = zeros(length(frequencies_oi), 3);
+
+for i = 1:length(frequencies_oi)
+    omega = frequencies_oi(i);
+    [~, index] = min(abs(w - omega));
+    response_table(i, 1) = omega;
+    response_table(i, 2) = magnitude(index);
+    response_table(i, 3) = phase(index);
+end
+
+disp('Response at Frequencies of Interest (L=41):');
+disp('--------------------------------------------');
+disp('Frequency (rad/sample) | Magnitude | Phase (radians)');
+disp('--------------------------------------------');
+fprintf('%f              | %f    | %f\n', response_table');
+disp('--------------------------------------------');
+
+% Zooming to estimate stopband ripple height
+figure;
+plot(w / pi, 20 * log10(magnitude));
+title('Magnitude Response (L=41) - Zoomed Stopband');
+xlabel('Frequency (\omega / \pi)');
+ylabel('Magnitude (dB)');
+xlim([0, 0.05]); % Adjust xlim to focus on a stopband region
+grid on;
+
+figure;
+plot(w / pi, 20 * log10(magnitude));
+title('Magnitude Response (L=41) - Zoomed Stopband');
+xlabel('Frequency (\omega / \pi)');
+ylabel('Magnitude (dB)');
+xlim([0.45, 0.55]); % Adjust xlim to focus on another stopband region
+grid on;
+
+% (b) Passband Width and Filter Length
+% Function to calculate passband width
+function passband_width = calculate_passband_width(magnitude, w)
+    peak_magnitude = max(magnitude);
+    passband_indices = find(magnitude >= 0.5 * peak_magnitude);
+    if ~isempty(passband_indices)
+        passband_start_index = passband_indices(1);
+        passband_end_index = passband_indices(end);
+        passband_width = (w(passband_end_index) - w(passband_start_index)) / pi;
+    else
+        passband_width = 0;
+    end
+end
+
+% Analyze for L = 41 (already done)
+passband_width_41 = calculate_passband_width(magnitude, w);
+fprintf('\nPassband Width (L=41): %f pi radians/sample\n', passband_width_41);
+
+% Analyze for L = 21
+L_21 = 21;
+n_21 = 0:L_21-1;
+hamming_window_21 = 0.54 - 0.46 * cos(2 * pi * n_21 / (L_21 - 1));
+impulse_response_21 = hamming_window_21 .* cos(omega_o * (n_21 - (L_21 - 1) / 2));
+[h_21, w_21] = freqz(impulse_response_21, 1, 512);
+magnitude_21 = abs(h_21);
+passband_width_21 = calculate_passband_width(magnitude_21, w_21);
+fprintf('Passband Width (L=21): %f pi radians/sample\n', passband_width_21);
+
+figure;
+plot(w_21 / pi, 20 * log10(magnitude_21));
+title('Magnitude Response (L=21)');
+xlabel('Frequency (\omega / \pi)');
+ylabel('Magnitude (dB)');
+grid on;
+
+% Analyze for L = 81
+L_81 = 81;
+n_81 = 0:L_81-1;
+hamming_window_81 = 0.54 - 0.46 * cos(2 * pi * n_81 / (L_81 - 1));
+impulse_response_81 = hamming_window_81 .* cos(omega_o * (n_81 - (L_81 - 1) / 2));
+[h_81, w_81] = freqz(impulse_response_81, 1, 512);
+magnitude_81 = abs(h_81);
+passband_width_81 = calculate_passband_width(magnitude_81, w_81);
+fprintf('Passband Width (L=81): %f pi radians/sample\n', passband_width_81);
+
+figure;
+plot(w_81 / pi, 20 * log10(magnitude_81));
+title('Magnitude Response (L=81)');
+xlabel('Frequency (\omega / \pi)');
+ylabel('Magnitude (dB)');
+grid on;
+
+% (c) Output Signal (by hand - see explanation in previous response)
+% The MATLAB code here primarily focuses on generating and analyzing the filter.
+% The hand calculation and comments on the output signal are provided in the
+% previous text-based response.
+
+% (d) Explanation of Filtering (based on frequency response - see explanation
+% in previous response)
+% The MATLAB code here generates the frequency response, which is the basis
+% for the explanation provided in the previous text-based response.

@@ -1,0 +1,111 @@
+clear all;
+close all;
+% (a) Generate a bandpass filter (BPF) with L = 40 and omega_oc = 0.4*pi
+L = 40;
+omega_oc = 0.4 * pi;
+n = 0:(L-1);
+h = (2/L) * cos(omega_oc * n);
+% Calculate the frequency response
+N_fft = 1024; % Use a larger number for smoother frequency response plot
+H = fft(h, N_fft);
+omega = (0:N_fft-1) / N_fft * 2 * pi;
+omega_shifted = omega - pi; % Shift frequency axis for better visualization
+H_shifted = fftshift(H);
+% Plot the frequency response magnitude and phase
+figure;
+subplot(2, 1, 1);
+plot(omega_shifted/pi, abs(H_shifted));
+title('Magnitude Response of Bandpass Filter (L=40, \omega_{oc}=0.4\pi)');
+xlabel('Normalized Frequency (\omega/\pi)');
+ylabel('|H(e^{j\omega})|');
+grid on;
+subplot(2, 1, 2);
+plot(omega_shifted/pi, angle(H_shifted));
+title('Phase Response of Bandpass Filter (L=40, \omega_{oc}=0.4\pi)');
+xlabel('Normalized Frequency (\omega/\pi)');
+ylabel('Phase (radians)');
+grid on;
+sgtitle('Frequency Response of Bandpass Filter (L=40)');
+% (b) Determine the passband width using the 0.5 level for L = 40 (Corrected)
+magnitude_response = abs(H_shifted);
+normalized_magnitude = magnitude_response / max(magnitude_response); % Normalize magnitude
+passband_indices = find(normalized_magnitude >= 0.5); % Use normalized magnitude
+if ~isempty(passband_indices)
+    passband_omega_shifted = omega_shifted(passband_indices);
+    passband_width_shifted = max(passband_omega_shifted) - min(passband_omega_shifted);
+    passband_width_normalized = passband_width_shifted / pi;
+    fprintf('For L = 40, the passband width (at 0.5 level) is approximately %.4f * pi radians/sample.\n', passband_width_normalized);
+    figure;
+    plot(omega_shifted/pi, normalized_magnitude); % Plot normalized magnitude
+    title('Normalized Magnitude Response with Passband (L=40, 0.5 Level)');
+    xlabel('Normalized Frequency (\omega/\pi)');
+    ylabel('|H(e^{j\omega})| / max(|H(e^{j\omega})|)');
+    grid on;
+    hold on;
+    plot(passband_omega_shifted/pi, normalized_magnitude(passband_indices), 'r.', 'MarkerSize', 10); % Mark passband
+    yline(0.5, '--k', '0.5 Level');
+    hold off;
+else
+    fprintf('For L = 40, the normalized magnitude response never reaches 0.5.\n');
+end
+% (c) Make two other plots of BPFs for L = 20 and L = 80 and measure passband width (Corrected)
+% Case L = 20
+L_20 = 20;
+n_20 = 0:(L_20-1);
+h_20 = (2/L_20) * cos(omega_oc * n_20);
+H_20 = fft(h_20, N_fft);
+H_shifted_20 = fftshift(H_20);
+normalized_magnitude_20 = abs(H_shifted_20) / max(abs(H_shifted_20));
+passband_indices_20 = find(normalized_magnitude_20 >= 0.5);
+if ~isempty(passband_indices_20)
+    passband_omega_shifted_20 = omega_shifted(passband_indices_20);
+    passband_width_shifted_20 = max(passband_omega_shifted_20) - min(passband_omega_shifted_20);
+    passband_width_normalized_20 = passband_width_shifted_20 / pi;
+    fprintf('For L = 20, the passband width (at 0.5 level) is approximately %.4f * pi radians/sample.\n', passband_width_normalized_20);
+    figure;
+    plot(omega_shifted/pi, normalized_magnitude_20);
+    title('Normalized Magnitude Response with Passband (L=20, 0.5 Level)');
+    xlabel('Normalized Frequency (\omega/\pi)');
+    ylabel('|H(e^{j\omega})| / max(|H(e^{j\omega})|)');
+    grid on;
+    hold on;
+    plot(passband_omega_shifted_20/pi, normalized_magnitude_20(passband_indices_20), 'r.', 'MarkerSize', 10); % Corrected line
+    yline(0.5, '--k', '0.5 Level');
+    hold off;
+else
+    fprintf('For L = 20, the normalized magnitude response never reaches 0.5.\n');
+end
+% Case L = 80
+L_80 = 80;
+n_80 = 0:(L_80-1);
+h_80 = (2/L_80) * cos(omega_oc * n_80);
+H_80 = fft(h_80, N_fft);
+H_shifted_80 = fftshift(H_80);
+normalized_magnitude_80 = abs(H_shifted_80) / max(abs(H_shifted_80));
+passband_indices_80 = find(normalized_magnitude_80 >= 0.5);
+if ~isempty(passband_indices_80)
+    passband_omega_shifted_80 = omega_shifted(passband_indices_80);
+    passband_width_shifted_80 = max(passband_omega_shifted_80) - min(passband_omega_shifted_80);
+    passband_width_normalized_80 = passband_width_shifted_80 / pi;
+    fprintf('For L = 80, the passband width (at 0.5 level) is approximately %.4f * pi radians/sample.\n', passband_width_normalized_80);
+    figure;
+    plot(omega_shifted/pi, normalized_magnitude_80);
+    title('Normalized Magnitude Response with Passband (L=80, 0.5 Level)');
+    xlabel('Normalized Frequency (\omega/\pi)');
+    ylabel('|H(e^{j\omega})| / max(|H(e^{j\omega})|)');
+    grid on;
+    hold on;
+    plot(passband_omega_shifted_80/pi, normalized_magnitude_80(passband_indices_80), 'r.', 'MarkerSize', 10); % Corrected line
+    yline(0.5, '--k', '0.5 Level');
+    hold off;
+else
+    fprintf('For L = 80, the normalized magnitude response never reaches 0.5.\n');
+end
+
+% Explanation of the relationship between passband width and L
+fprintf('\nExplanation:\n');
+fprintf('The width of the passband of this bandpass filter is inversely proportional to the filter length L.\n');
+fprintf('When L is doubled (from 40 to 80), the passband width becomes approximately half.\n');
+fprintf('When L is halved (from 40 to 20), the passband width becomes approximately double.\n');
+fprintf('A longer filter (larger L) results in a narrower passband, providing more selectivity in the frequency domain.\n');
+fprintf('A shorter filter (smaller L) results in a wider passband, allowing a broader range of frequencies around the center frequency to pass.\n');

@@ -1,0 +1,64 @@
+% Filter parameters from the previous section
+L = 25;
+omega_oc = 0.2 * pi;
+n_h = 0:(L-1);
+h = (2/L) * cos(omega_oc * n_h);
+
+% (a) Generate x[n] in a vector called xx
+n = 0:599;
+xx = zeros(size(n));
+xx(n < 200) = cos(0.5 * n(n < 200));
+xx(n >= 200 & n < 400) = 2;
+xx(n >= 400) = 0.5 * cos(0.2 * n(n >= 400));
+
+% (b) Filter xx to obtain yy
+yy = conv(xx, h, 'same');
+
+% (c) Make plots of xx, filter and yy in the frequency domain
+
+% Frequency domain analysis of xx
+N_xx = length(xx);
+XX = fft(xx);
+freq_xx = (0:N_xx-1) / N_xx;
+freq_shift_xx = (-N_xx/2:N_xx/2-1) / N_xx;
+XX_shifted = fftshift(XX);
+
+% Frequency domain analysis of the filter h
+N_h = length(h);
+HH = fft(h, N_xx); % Pad the filter response to the length of xx for proper comparison
+freq_hh = (0:N_xx-1) / N_xx;
+freq_shift_hh = (-N_xx/2:N_xx/2-1) / N_xx;
+HH_shifted = fftshift(HH);
+
+% Frequency domain analysis of yy
+N_yy = length(yy);
+YY = fft(yy);
+freq_yy = (0:N_yy-1) / N_yy;
+freq_shift_yy = (-N_yy/2:N_yy/2-1) / N_yy;
+YY_shifted = fftshift(YY);
+
+% Plotting
+figure;
+
+subplot(3, 1, 1);
+plot(freq_shift_xx, abs(XX_shifted));
+title('Magnitude Spectrum of x[n]');
+xlabel('Normalized Frequency (\times \pi rad/sample)');
+ylabel('|X(\omega)|');
+grid on;
+
+subplot(3, 1, 2);
+plot(freq_shift_hh, abs(HH_shifted));
+title('Magnitude Response of the Filter H(\omega)');
+xlabel('Normalized Frequency (\times \pi rad/sample)');
+ylabel('|H(\omega)|');
+grid on;
+
+subplot(3, 1, 3);
+plot(freq_shift_yy, abs(YY_shifted));
+title('Magnitude Spectrum of y[n]');
+xlabel('Normalized Frequency (\times \pi rad/sample)');
+ylabel('|Y(\omega)|');
+grid on;
+
+sgtitle('Frequency Domain Analysis');

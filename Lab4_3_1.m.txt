@@ -1,0 +1,53 @@
+clear all;
+close all;
+% (a) 
+L = 25;             
+omega_c = 0.2*pi;  
+n = 0:(L-1);       
+h = (2/L) * cos(omega_c * n); 
+
+figure;
+stem(n, h);
+title('Impulse Response h[n]');
+xlabel('n');
+ylabel('h[n]');
+
+% (b) 
+[H, omega] = freqz(h, 1, 1024, 'whole'); 
+w_shifted = linspace(-pi, pi - (2*pi/512), 512);
+
+figure;
+subplot(2, 1, 1);
+plot(omega, abs(H));
+title('Magnitude Response');
+xlabel('\Omega (radians)');
+ylabel('|H(e^{j\Omega})|');
+xlim([0 2*pi]); 
+
+subplot(2, 1, 2);
+plot(omega, angle(H));
+title('Phase Response');
+xlabel('\Omega (radians)');
+ylabel('Phase (radians)');
+xlim([0 2*pi]); 
+
+% (c) 
+H_mag = abs(H);
+H_max = max(H_mag);
+omega_max = omega_c;
+
+passband_indices = find(H_mag >= 0.5 * H_max);
+if ~isempty(passband_indices)
+    first_index = passband_indices(1);
+    last_index = passband_indices(end);
+omega_passband_start = w_shifted(first_index);
+omega_passband_end = w_shifted(last_index);
+bandwidth_50_percent = omega_passband_end - omega_passband_start;
+
+fprintf('Center frequency: %.4f Hz\n', omega_max);
+fprintf('Passband start frequency (50%%): %.4f Hz\n', omega_passband_start);
+fprintf('Passband end frequency (50%%): %.4f Hz\n', omega_passband_end);
+fprintf('Bandwidth at 50%% of peak: %.4f Hz\n', bandwidth_50_percent);
+
+else
+end
