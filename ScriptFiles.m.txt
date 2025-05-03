@@ -1,0 +1,18 @@
+yyy = [ ];
+for k=-5:5
+    yyy(k+6) = cos(k*pi/3)
+end
+yyy
+
+x = [-3 -1 0 1 3];
+y = x.*x - 3*x;
+plot( x,y )
+z = x + y*sqrt(-1)
+plot(z)
+
+tt = -1: 0.01 : 1;
+xx = cos( 5*pi*tt );
+zz = 1.4*exp(j*pi/2)*exp(j*5*pi*tt);
+plot(tt, xx, 'b-', tt, real(zz), 'r--'), grid on
+title('TITLE PLOT of) a SINOSOID')
+xlabel('TIME (sec)')

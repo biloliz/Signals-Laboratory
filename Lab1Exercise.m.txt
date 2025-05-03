@@ -1,0 +1,38 @@
+fs = 100 * 4000;  
+T = 1/4000;       
+dt = 1/fs;        
+tt = -T:dt:T;     
+
+A1 = 21;
+A2 = 1.2 * A1;
+D = 11;   
+M = 4;   
+tm1 = (37.2/M) * T;
+tm2 = -(41.3/D) * T;
+
+x1 = A1 * cos(2 * pi * 4000 * (tt - tm1));
+x2 = A2 * cos(2 * pi * 4000 * (tt - tm2));
+x3 = x1 + x2;
+
+figure;
+subplot(3,1,1);
+plot(tt, x1, 'b');
+title('Sinusoid x_1(t) - Roneline');
+xlabel('Time (seconds)');
+ylabel('Amplitude');
+grid on;
+
+subplot(3,1,2);
+plot(tt, x2, 'r');
+title('Sinusoid x_2(t)');
+xlabel('Time (seconds)');
+ylabel('Amplitude');
+grid on;
+
+subplot(3,1,3);
+plot(tt, x3, 'k');
+title('Summed Signal x_3(t)');
+xlabel('Time (seconds)');
+ylabel('Amplitude');
+grid on; 
+orient tall;
