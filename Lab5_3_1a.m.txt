@@ -1,0 +1,14 @@
+clear all;
+close all;
+b = [1 -1];  
+a = 1;       
+
+[H, w] = freekz(b, a, 1024);
+
+figure;
+plot(w/pi, abs(H));
+grid on;
+title('Magnitude Response of Pre-emphasis Filter H(z) = 1 - z^{-1}');
+xlabel('Normalized Frequency (\times\pi rad/sample)');
+ylabel('Magnitude');
+
