@@ -1,0 +1,33 @@
+% Part (b)
+w_hat = linspace(-pi, pi, 400); 
+H = (2*cos(0.5*w_hat) + 2*cos(1.5*w_hat)) / 4 .* exp(-1j*1.5*w_hat);  
+
+% Plot magnitude and phase
+figure;
+subplot(2,1,1);
+plot(w_hat, abs(H));
+title('Magnitude of H(e^{j\omega}) (Part b)');
+xlabel('\omega'); ylabel('|H(e^{j\omega})|');
+
+subplot(2,1,2);
+plot(w_hat, angle(H));
+title('Phase of H(e^{j\omega}) (Part b)');
+xlabel('\omega'); ylabel('∠H(e^{j\omega})');
+
+% Part (c)
+bb = 1/4 * ones(1, 4);  
+[H_freqz, w] = freqz(bb, 1, 400, 'whole');  
+w = w - pi;  
+H_freqz = fftshift(H_freqz);  
+
+% Plot magnitude and phase
+figure;
+subplot(2,1,1);
+plot(w, abs(H_freqz));
+title('Magnitude of H(e^{j\omega}) using freqz (Part c)');
+xlabel('\omega'); ylabel('|H(e^{j\omega})|');
+
+subplot(2,1,2);
+plot(w, angle(H_freqz));
+title('Phase of H(e^{j\omega}) using freqz (Part c)');
+xlabel('\omega'); ylabel('∠H(e^{j\omega})');

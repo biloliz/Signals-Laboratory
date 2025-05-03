@@ -1,0 +1,32 @@
+% (b) 
+n = 0:149;
+x = 5*cos(0.3*pi*n) + 22*cos(0.44*pi*n - pi/3) + 22*cos(0.7*pi*n - pi/4);
+
+% (c)
+% Filter 1 coefficients
+b1 = [1, -2*cos(0.44*pi), 1];
+% Filter 2 coefficients
+b2 = [1, -2*cos(0.7*pi), 1];
+
+% Cascade the filters using conv (convolution)
+y = conv(b1, x);
+z = conv(b2, y);
+
+% (d) 
+figure;
+plot(n(1:40), z(1:40));
+title('Output Signal (First 40 points)');
+xlabel('n');
+ylabel('z[n]');
+
+% (e) 
+A = 5; 
+z_formula = A*cos(0.3*pi*n);
+
+figure;
+plot(n(5:40), z(5:40), 'b-', n(5:40), z_formula(5:40), 'r--');
+title('Comparison of Filter Output and Formula');
+xlabel('Sample Index (n)');
+ylabel('Output Signal (z[n])');
+legend('Filter Output', 'Formula Approximation');
+grid on;
