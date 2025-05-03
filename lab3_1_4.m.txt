@@ -1,0 +1,23 @@
+xx = 1.4:0.33:5;
+jkl = find(round(xx)== 3);
+xx(jkl);
+
+%part2
+ww = -pi:(pi/500):pi;
+bb = 1/4 * ones(1, 4);
+HH = freqz(bb, 1, ww);
+
+threshold = 1e-6;
+zero_indices = find(abs(HH) < threshold);
+zero_frequencies = ww(zero_indices);
+
+disp('Frequencies where |H(e^jω)| ≈ 0:');
+disp(zero_frequencies);
+
+figure;
+plot(ww, abs(HH));
+xlabel('\omega (rad/sample)');
+ylabel('|H(e^{j\omega})|');
+title('Magnitude of Frequency Response of 4-point Averager');
+grid on;
+

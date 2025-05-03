@@ -1,0 +1,62 @@
+clear all;
+close all;
+% a
+alpha = 0.8;
+M = 9;
+ww = -pi:pi/500:pi; 
+
+% Filter #1 coefficients
+b1 = alpha.^(0:M);  
+a1 = 1;            
+
+% Filter #2 coefficients
+b2 = [1, -alpha];
+a2 = 1;
+
+% Calculate frequency responses
+H1 = freqz(b1, a1, ww);
+H2 = freqz(b2, a2, ww);
+
+% Plot magnitude responses
+subplot(2, 2, 1);
+plot(ww, abs(H1));
+title('Magnitude Response: Filter #1');
+xlabel('Normalized Frequency (rad/sample)');
+ylabel('Magnitude');
+
+subplot(2, 2, 3);
+plot(ww, abs(H2));
+title('Magnitude Response: Filter #2');
+xlabel('Normalized Frequency (rad/sample)');
+ylabel('Magnitude');
+
+% Plot phase responses
+subplot(2, 2, 2);
+plot(ww, angle(H1));
+title('Phase Response: Filter #1');
+xlabel('Normalized Frequency (rad/sample)');
+ylabel('Phase (radians)');
+
+subplot(2, 2, 4);
+plot(ww, angle(H2));
+title('Phase Response: Filter #2');
+xlabel('Normalized Frequency (rad/sample)');
+ylabel('Phase (radians)');
+
+
+% b
+H_cascade = H1 .* H2;
+Angle = angle(H1) + angle(H2);
+
+figure; 
+subplot(2, 1, 1);
+plot(ww, abs(H_cascade));
+title('Magnitude Response: Cascaded System');
+xlabel('Normalized Frequency (rad/sample)');
+ylabel('Magnitude');
+
+subplot(2, 1, 2);
+plot(ww, Angle);
+title('Phase Response: Cascaded System');
+xlabel('Normalized Frequency (rad/sample)');
+ylabel('Phase (radians)');

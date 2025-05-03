@@ -1,0 +1,126 @@
+% (a) 
+L = 10;
+omega_c = 0.44*pi;
+n = 0:(L-1);
+h = (2/L) * cos(omega_c * n);
+
+% Frequencies of interest
+omega1 = 0.3*pi;
+omega2 = 0.44*pi;
+omega3 = 0.7*pi;
+
+% Frequency response
+[H, ww] = freqz(h, 1, 512); % Evaluate at many points for smooth plot
+
+% Calculate gain at specific frequencies
+H1_index = find(abs(ww - omega1) < 1e-6); % Find index closest to omega1
+H2_index = find(abs(ww - omega2) < 1e-6); % Find index closest to omega2
+H3_index = find(abs(ww - omega3) < 1e-6); % Find index closest to omega3
+
+gain_omega1 = abs(H(H1_index));
+gain_omega2 = abs(H(H2_index));
+gain_omega3 = abs(H(H3_index));
+
+fprintf('Gain at omega = %.2f*pi: %.4f\n', omega1/pi, gain_omega1);
+fprintf('Gain at omega = %.2f*pi: %.4f\n', omega2/pi, gain_omega2);
+fprintf('Gain at omega = %.2f*pi: %.4f\n', omega3/pi, gain_omega3);
+
+% (b1)
+H_max = max(abs(H));
+passband_indices = find(abs(H) >= 0.707 * H_max);
+passband_width = ww(max(passband_indices)) - ww(min(passband_indices));
+
+fprintf('Passband width for L = %d: %.4f radians\n', L, passband_width);
+figure;
+plot(ww, abs(H));
+title(['Bandpass Filter Response (L = ' num2str(L) ')']);
+xlabel('Frequency (radians)');
+ylabel('Magnitude |H(e^j\omega)|');
+hold on;
+plot(ww(passband_indices), abs(H(passband_indices)), 'r.'); 
+yline(0.707*H_max, 'r--'); 
+hold off;
+
+% (b2)
+L_values = [20 40];
+
+for L = L_values
+    n = 0:(L-1);
+    h = (2/L) * cos(omega_c * n);
+    [H, ww] = freqz(h, 1, 512);
+
+    H_max = max(abs(H));
+    passband_indices = find(abs(H) >= 0.707 * H_max);
+    passband_width = ww(max(passband_indices)) - ww(min(passband_indices));
+
+    fprintf('Passband width for L = %d: %.4f radians\n', L, passband_width);
+
+    figure;
+    plot(ww, abs(H));
+    title(['Bandpass Filter Response (L = ' num2str(L) ')']);
+    xlabel('Frequency (radians)');
+    ylabel('Magnitude |H(e^j\omega)|');
+    hold on;
+    plot(ww(passband_indices), abs(H(passband_indices)), 'r.');
+    yline(0.707*H_max, 'r--');
+    hold off;
+end
+
+% (d) Generate bandpass filter with strong rejection
+omega_c = 0.44*pi;
+omega_stop1 = 0.3*pi;
+omega_stop2 = 0.7*pi;
+
+L = 200;  
+while true
+    n = 0:(L-1);
+    h = (2/L) * cos(omega_c * n);
+    [H, ww] = freqz(h, 1, 512);
+    H_max = max(abs(H));
+
+    gain_stop1 = abs(H(find(abs(ww - omega_stop1) < 1e-6, 1, 'first')));
+    gain_stop2 = abs(H(find(abs(ww - omega_stop2) < 1e-6, 1, 'first')));
+
+    if all(gain_stop1 < 0.1 * H_max) && all(gain_stop2 < 0.1 * H_max)
+    break;
+    else
+        L = L + 1;  
+    end  
+end
+
+fprintf('Smallest L for strong rejection: %d\n', L);
+
+% Plot frequency response
+figure;
+plot(ww, abs(H));
+title(['Bandpass Filter Response (L = ' num2str(L) ')']);
+xlabel('Frequency (radians)');
+ylabel('Magnitude |H(e^j\omega)|');
+
+% (e) 
+n = 0:149;
+x = 5*cos(0.3*pi*n) + 22*cos(0.44*pi*n - pi/3) + 22*cos(0.7*pi*n - pi/4);
+
+y = filter(h, 1, x); 
+
+figure;
+subplot(2, 1, 1);
+plot(n(1:100), x(1:100));
+title('Input Signal');
+xlabel('n');
+ylabel('x[n]');
+
+subplot(2, 1, 2);
+plot(n(1:100), y(1:100));
+title('Output Signal');
+xlabel('n');
+ylabel('y[n]');
+
+% (f) 
+[H, ww] = freqz(h, 1, 512); 
+
+figure;
+plot(ww, abs(H));
+title('Frequency Response (Magnitude)');
+xlabel('Frequency (radians)');
+ylabel('|H(e^j\omega)|');
