@@ -1,0 +1,22 @@
+clear all;
+close all;
+
+[x, fs] = audioread('female2.wav');
+if size(x,2) > 1
+    x = mean(x,2); %convert mono to stereo
+end
+
+b = [1, -1];
+a = 1;
+y = filter(b, a, x);
+
+figure;
+subplot(2,1,1);
+spectrogram(x, 256, 200, 512, fs, 'yaxis');
+title('Original Speech Signal');
+xlabel('Time (s)'); ylabel('Frequency (kHz)');
+
+subplot(2,1,2);
+spectrogram(y, 256, 200, 512, fs, 'yaxis');
+title('Pre-Emphasized Speech Signal');
+xlabel('Time (s)'); ylabel('Frequency (kHz)');

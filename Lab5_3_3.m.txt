@@ -1,0 +1,45 @@
+clear all;
+close all;
+
+%a
+function bk = designBPF(M, wc1, wc2)
+    n = 0:M;
+    alpha = M / 2;
+
+    if nargin == 2
+
+        h = sin(wc1*(n - alpha)) ./ (pi*(n - alpha));
+        h(alpha + 1) = wc1/pi;
+    else
+        h1 = sin(wc2*(n - alpha)) ./ (pi*(n - alpha));
+        h2 = sin(wc1*(n - alpha)) ./ (pi*(n - alpha));
+        h = h1 - h2;
+        h(alpha + 1) = (wc2 - wc1)/pi;
+    end
+
+    bk = h .* hamming(M + 1)';
+end
+
+%b
+M = 100;
+wc1 = 1.5;
+wc2 = 2.0;
+
+bk = designBPF(M, wc1, wc2);
+[H, w] = freqz(bk, 1, 1024);
+
+figure;
+plot(w, abs(H));
+xlabel('Normalized Frequency (\times\pi rad/sample)');
+ylabel('|H(e^{j\omega})|');
+title('Frequency Response of BPF');
+
+%c
+fs = 8000;
+f = w * fs / (2*pi);
+
+figure;
+plot(f, abs(H));
+xlabel('Frequency (Hz)');
+ylabel('|H(e^{j\omega})|');
+title('BPF Frequency Response (Hz)');

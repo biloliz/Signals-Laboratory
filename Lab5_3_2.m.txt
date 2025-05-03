@@ -1,0 +1,40 @@
+clear all;
+close all;
+fs = 8000;
+T = 1.3;
+t = 0:1/fs:T;
+
+f1 = 215;
+f2 = 1064;
+beta = 1.2;
+
+bt = (beta + cos(2*pi*f1*t)) .* cos(2*pi*f2*t);
+
+figure;
+plot(t, bt);
+xlim([0 0.05]);
+title('AM Signal b(t)');
+xlabel('Time (s)'); ylabel('Amplitude');
+
+%b
+bt_mag = abs(bt);
+
+figure;
+plot(t, bt_mag);
+xlim([0 0.05]);
+title('Magnitude |b(t)|');
+xlabel('Time (s)'); ylabel('Magnitude');
+
+%c
+figure;
+subplot(3,1,1);
+spectrogram(bt, 1024, 768, 1024, fs, 'yaxis');
+title('Spectrogram of b(t)');
+
+subplot(3,1,2);
+spectrogram(bt_mag, 1024, 768, 1024, fs, 'yaxis');
+title('Spectrogram of |b(t)|');
+
+subplot(3,1,3);
+spectrogram(bt, 1024, 768, 1024, fs, 'yaxis');
+title('Spectrogram of b1(t)');
