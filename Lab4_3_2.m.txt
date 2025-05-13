@@ -1,0 +1,28 @@
+clear all;
+close all;
+
+L = 25;
+omega_oc = 0.2 * pi;
+n_h = 0:(L-1);
+h = (2/L) * cos(omega_oc * n_h);
+
+% (a)
+[H, w] = freqz(h, 1, 512, 'whole'); 
+magnitude_H = abs(fftshift(H)); 
+w_shifted = linspace(-pi, pi - (2*pi/512), 512); 
+
+figure;
+plot(w_shifted, magnitude_H);
+title('Magnitude Response of 25-point BPF Filter');
+xlabel('\omega (radians/sample)');
+ylabel('|H(e^{j\omega})|');
+xlim([-pi, pi]);
+
+% (b)
+hold on; 
+angular_frequencies_to_mark = pi * [-0.5, -0.2, 0, 0.2, 0.5]; 
+magnitudes_at_markers = interp1(w_shifted, magnitude_H, angular_frequencies_to_mark, 'linear', 0);
+
+stem(angular_frequencies_to_mark, magnitudes_at_markers, 'r.', 'LineWidth', 1.5, 'MarkerSize', 10);
+
+hold off; 
